@@ -6,6 +6,6 @@ class GenerateRandomUserForm(forms.Form):
     total = forms.IntegerField(
         validators=[
             MinValueValidator(10),
-            MaxValueValidator(20)
+            MaxValueValidator(2000)
         ]
     )

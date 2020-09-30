@@ -111,17 +111,8 @@ CELERY_ROUTES = {
  'core.tasks.create_random_user_accounts': {'queue': 'queue1'},
  'core.tasks.create_random_user_accounts_2': {'queue': 'queue2'},
 }
-CELERY_BEAT_SCHEDULE = {
-    'app1_test': {
-        'task': 'core.tasks.create_random_user_accounts',
-        'schedule': 15,
-    },
-    'app2_test': {
-        'task': 'core.tasks.create_random_user_accounts_2',
-        'schedule': 15,
-    },
 
-}
+TASK_CREATE_MISSING_QUEUES = False
 
 
 # command to run celery in environment
