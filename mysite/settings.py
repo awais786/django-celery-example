@@ -106,3 +106,27 @@ STATIC_URL = '/static/'
 
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 
+
+CELERY_ROUTES = {
+ 'core.tasks.create_random_user_accounts': {'queue': 'queue1'},
+ 'core.tasks.create_random_user_accounts_2': {'queue': 'queue2'},
+}
+CELERY_BEAT_SCHEDULE = {
+    'app1_test': {
+        'task': 'core.tasks.create_random_user_accounts',
+        'schedule': 15,
+    },
+    'app2_test': {
+        'task': 'core.tasks.create_random_user_accounts_2',
+        'schedule': 15,
+    },
+
+}
+
+
+# command to run celery in environment
+# celery -A mysite worker -l info -Q queue1,queue2,celery
+
+
+# command to run flower
+# celery flower -A mysite --broker=redis://localhost:6379/0
