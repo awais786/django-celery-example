@@ -20,7 +20,11 @@ class GenerateRandomUserView(FormView):
 
     def form_valid(self, form):
         total = form.cleaned_data.get('total')
-        create_random_user_accounts.delay(total)
-        create_random_user_accounts_2.delay(total)
+        create_random_user_accounts.apply_async(args=[total],
+                                                queue='queue1',
+                                                routing_key='queue1')
+        create_random_user_accounts_2.apply_async(args=[total],
+                                                  queue='queue2',
+                                                  routing_key='queue2')
         messages.success(self.request, 'We are generating your random users! Wait a moment and refresh this page.')
         return redirect('users_list')

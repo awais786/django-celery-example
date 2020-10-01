@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from kombu import Queue
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -106,14 +108,16 @@ STATIC_URL = '/static/'
 
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 
+CELERY_TASK_QUEUES = [
+    Queue(name='celery'),
+    Queue(name='queue1', routing_key='queue1'),
+    Queue(name='queue2', routing_key='queue1'),
+]
 
-CELERY_ROUTES = {
- 'core.tasks.create_random_user_accounts': {'queue': 'queue1'},
- 'core.tasks.create_random_user_accounts_2': {'queue': 'queue2'},
+CELERY_TASK_ROUTES = {
+ 'core.tasks.create_random_user_accounts':  {'queue': 'queue1', 'routing_key': 'queue1'},
+ 'core.tasks.create_random_user_accounts_2': {'queue': 'queue2', 'routing_key': 'queue2'},
 }
-
-TASK_CREATE_MISSING_QUEUES = False
-
 
 # command to run celery in environment
 # celery -A mysite worker -l info -Q queue1,queue2,celery
