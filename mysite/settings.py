@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import sys
+
 from kombu import Queue
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'mysite.core',
+    'mysite.core1',
 ]
 
 MIDDLEWARE = [
@@ -125,3 +127,81 @@ CELERY_TASK_ROUTES = {
 
 # command to run flower
 # celery flower -A mysite --broker=redis://localhost:6379/0
+
+
+import logging
+LOGGING_ROOT = os.path.join(BASE_DIR, '/')
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'simple': {
+            'format': '%(levelname)s dc %(message)s',
+            'datefmt': '%y %b %d, %H:%M:%S',
+        },
+        'normal': {
+            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            'datefmt': '%y %b %d, %H:%M:%S',
+        },
+
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        # 'django': {
+        #     'level': 'INFO',
+        #     'class': 'logging.handlers.RotatingFileHandler',
+        #     'filename': 'logs/django.log',
+        #     'formatter': 'normal',
+        #     'maxBytes': 1024 * 1024 * 100,  # 100 mb
+        # },
+        'celery': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/celery.log',
+            'formatter': 'normal',
+            'maxBytes': 1024 * 1024 * 100,  # 100 mb
+        },
+        'engineapp': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/engine.log',
+            'formatter': 'normal',
+            'maxBytes': 1024 * 1024 * 100,  # 100 mb
+        },
+        'scrapy': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/scrapy.log'),
+            'formatter': 'normal'
+        }
+    },
+    'loggers': {
+        # 'django': {
+        #     'handlers': ['django',],
+        #     'level': 'INFO',
+        # },
+        'scrapy': {
+            'handlers': ['scrapy'],
+            'level': 'INFO',
+        },
+        'engineapp': {
+            'handlers': ['engineapp'],
+            'level': 'INFO',
+        },
+        'celery': {
+            'handlers': ['engineapp'],
+            'level': 'INFO',
+        },
+    },
+
+}
+
+from logging.config import dictConfig
+
+dictConfig(LOGGING)
